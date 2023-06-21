@@ -9,7 +9,7 @@ namespace CommonModels.ViewModel
 {
     public class UserRegistrationViewModel
     {
-        public int Id { get; set; }
+       // public int Id { get; set; }
         [Required(ErrorMessage = "Email is required.")]
         [EmailAddress(ErrorMessage = "Invalid email address.")]
         public string Email { get; set; }
@@ -19,7 +19,7 @@ namespace CommonModels.ViewModel
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
-        public string[] Roles { get; set; }
+
         [DataType(DataType.Date)]
         [Required(ErrorMessage = " Date is required.")]
         public DateTime Date { get; set; }

@@ -1,5 +1,3 @@
-using FluentAssertions.Common;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -30,6 +28,6 @@ app.UseAuthorization();
 //});
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=EmployeeDetail}/{action=Index}/{id?}");
+    pattern: "{controller=EmployeeDetail}/{action=Registration}/{id?}");
 
 app.Run();

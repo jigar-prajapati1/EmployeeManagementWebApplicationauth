@@ -8,9 +8,10 @@ using Services.Interfaces;
 
 namespace EmployeeMangementWebApi.Controllers
 {
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+   
     public class EmployeeDetailController : Controller
     {
         private readonly IEmployeeDetailService employeeDetailService;
@@ -35,7 +36,7 @@ namespace EmployeeMangementWebApi.Controllers
             {
                 return BadRequest(ex.Message);
             }
-          
+
         }
         /// <summary>Gets the employee by identifier.</summary>
         /// <param name="id">The identifier.</param>
@@ -61,15 +62,16 @@ namespace EmployeeMangementWebApi.Controllers
         /// <returns>
         ///   <br />
         /// </returns>
+        [Route("AddEmployee")]
         [HttpPost]
-        public IActionResult AddEmployee(EmployeeDetailViewModel empDetail) 
+        public IActionResult AddEmployee(EmployeeDetailViewModel empDetail)
         {
             try
             {
                 employeeDetailService.AddEmployeeDetail(empDetail);
                 return Ok(empDetail);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -82,7 +84,7 @@ namespace EmployeeMangementWebApi.Controllers
         /// </returns>
         [HttpPut]
         [Route("{id:int}")]
-        public IActionResult UpdateEmployee(EmployeeDetailViewModel empDetail,int id)
+        public IActionResult UpdateEmployee(EmployeeDetailViewModel empDetail, int id)
         {
             try
             {
@@ -93,7 +95,7 @@ namespace EmployeeMangementWebApi.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            
+
         }
         [HttpDelete]
         [Route("{id:int}")]
@@ -104,12 +106,10 @@ namespace EmployeeMangementWebApi.Controllers
                 employeeDetailService.DeleteEmployee(id);
                 return Ok();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-             
-           
         }
     }
 }

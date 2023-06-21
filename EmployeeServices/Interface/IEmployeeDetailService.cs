@@ -8,10 +8,9 @@ namespace Services.Interfaces
         List<EmployeeDesignationViewModel> GetDesignations();
         EmployeeDetailViewModel GetEmployeeById(int id);
         void AddEmployeeDetail(EmployeeDetailViewModel employeeDetail);
-        void UpdateEmployeeDetail(EmployeeDetailViewModel employeeDetail,int id);
+        void UpdateEmployeeDetail(EmployeeDetailViewModel employeeDetail, int id);
         void DeleteEmployee(int id);
-        //void NewEmployeeLogin(UsersLoginViewModel _usersLogin);
-        //void NewEmployeeRegistration(UserRegistrationViewModel _registration);
-
+        void NewEmployeeLogin(UsersLoginViewModel _usersLogin);
+        void NewEmployeeRegistration(UserRegistrationViewModel _registration);
     }
 }

@@ -14,25 +14,25 @@ namespace Services.Implements
             _empDetailRepo = empDetailRepo;
         }
 
-       //public void NewEmployeeRegistration(UserRegistrationViewModel _registration)
-       // {
-       //     var registration = new UserRegistration
-       //     {
-       //         Email = _registration.Email,
-       //         Password = _registration.Password,
-       //         ConfirmPassword = _registration.ConfirmPassword
-       //     };
-       //     _empDetailRepo.EmployeeRegistration(registration);
-       // }
-       // public void NewEmployeeLogin(UsersLoginViewModel _usersLogin)
-       // {
-       //     var usersLogin = new UsersLogin
-       //     {
-       //         Email = _usersLogin.Email,
-       //         password = _usersLogin.password
-       //     };
-       //     _empDetailRepo.EmployeeLogin(usersLogin);
-       // }
+        public void NewEmployeeRegistration(UserRegistrationViewModel _registration)
+        {
+            var registration = new UserRegistration
+            {
+                Email = _registration.Email,
+                Password = _registration.Password,
+                ConfirmPassword = _registration.ConfirmPassword
+            };
+            _empDetailRepo.EmployeeRegistration(registration);
+        }
+        public void NewEmployeeLogin(UsersLoginViewModel _usersLogin)
+        {
+            var usersLogin = new UsersLogin
+            {
+                Email = _usersLogin.Email,
+                password = _usersLogin.password
+            };
+            _empDetailRepo.EmployeeLogin(usersLogin);
+        }
         public List<EmployeeDetailViewModel> GetAllEmployee()
         {
             try
@@ -115,7 +115,7 @@ namespace Services.Implements
                 //mapping Dbmode to view model
                 var empDbModel = new EmployeeDetail
                 {
-
+                    //Id = employeeDetail.Id,
                     Name = employeeDetail.Name,
                     DesignationId = employeeDetail.DesignationId,
                     ProfilePicture = employeeDetail.ProfilePicture,
@@ -130,9 +130,7 @@ namespace Services.Implements
             {
                 throw ex;
             }
-
         }
-
         public void UpdateEmployeeDetail(EmployeeDetailViewModel employeeDetail, int id)
         {
             try
@@ -152,7 +150,6 @@ namespace Services.Implements
             {
                 throw ex;
             }
-
         }
         public void DeleteEmployee(int id)
         {
@@ -164,8 +161,6 @@ namespace Services.Implements
             {
                 throw ex;
             }
-
         }
-
     }
 }

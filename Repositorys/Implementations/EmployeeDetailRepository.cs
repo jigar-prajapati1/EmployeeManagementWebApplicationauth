@@ -1,15 +1,9 @@
 ﻿using CommonModels.DbModels;
-using CommonModels.ViewModel;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Repositorys.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repositorys.Implements
 {
@@ -24,25 +18,24 @@ namespace Repositorys.Implements
             _configuration = configuration;
             conn = _configuration.GetConnectionString("DefaultConnection");
         }
-        //public List<UserRegistration> EmployeeRegistration(UserRegistration _registration)
-        //{
-        //    var parameter = new DynamicParameters();
-        //    using IDbConnection connection = new SqlConnection(conn);
-        //    parameter.Add("@Email", _registration.Email);
-        //    parameter.Add("@Password", _registration.Password);
-        //    return connection.Query<UserRegistration>("UserRegistration", parameter, commandType: CommandType.StoredProcedure).ToList();
+        public List<UserRegistration> EmployeeRegistration(UserRegistration _registration)
+        {
+            var parameter = new DynamicParameters();
+            using IDbConnection connection = new SqlConnection(conn);
+            parameter.Add("@Email", _registration.Email);
+            parameter.Add("@Password", _registration.Password);
+            return connection.Query<UserRegistration>("UserRegistration", parameter, commandType: CommandType.StoredProcedure).ToList();
+        }
+        public List<UsersLogin> EmployeeLogin(UsersLogin _login)
+        {
+            var parameter = new DynamicParameters();
+            using IDbConnection connection = new SqlConnection(conn);
+            parameter.Add("@Email", _login.Email);
+            parameter.Add("@Password", _login.password);
 
-        //}
-        //public List<UsersLogin> EmployeeLogin(UsersLogin _login)
-        //{
-        //    var parameter = new DynamicParameters();
-        //    using IDbConnection connection = new SqlConnection(conn);
-        //    parameter.Add("@Email", _login.Email);
-        //    parameter.Add("@Password", _login.password);
-            
-        //        return connection.Query<UsersLogin>("UsersLogin", parameter, commandType: CommandType.StoredProcedure).ToList();
-            
-        //}
+            return connection.Query<UsersLogin>("UsersLogin", parameter, commandType: CommandType.StoredProcedure).ToList();
+
+        }
         public List<EmployeeDesignation> GetDesignations()
         {
             try
@@ -90,6 +83,7 @@ namespace Repositorys.Implements
                 var parameter = new DynamicParameters();
                 using IDbConnection connection = new SqlConnection(conn);
                 {
+                   // parameter.Add("@Id", employee.Id);
                     parameter.Add("@Name", employee.Name);
                     parameter.Add("@DesignationId", employee.DesignationId);
                     parameter.Add("@ProfilePicture", employee.ProfilePicture);
