@@ -1,3 +1,5 @@
+using System.Web.Http;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -19,13 +21,6 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
-//builder.Services.AddCors();
-//app.UseCors(options =>
-//{
-//    options.AllowAnyOrigin();
-//    options.AllowAnyMethod();
-//    options.AllowAnyHeader();
-//});
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=EmployeeDetail}/{action=Registration}/{id?}");

@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using CommonModels.ViewModel;
 using EmployeeServices.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
 
@@ -8,6 +9,7 @@ namespace EmployeeMangementWebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class AuthController : Controller
     {
         private readonly IEmployeeDetailService employeeDetailService;

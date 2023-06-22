@@ -67,14 +67,20 @@ namespace Services.Implements
         {
             try
             {
-                List<EmployeeDesignation> viewModelList = _empDetailRepo.GetDesignations();
-                List<EmployeeDesignationViewModel> employeeList = viewModelList.Select(v => new EmployeeDesignationViewModel
+                List<EmployeeDesignationViewModel> Employeelist = new List<EmployeeDesignationViewModel>();
+                var Dbmodellist = _empDetailRepo.GetDesignations();
+                if (Dbmodellist != null && Dbmodellist.Count > 0)
                 {
-                    DesignationId = v.DesignationId,
-                    Designation = v.Designation,
-
-                }).ToList();
-                return employeeList;
+                    foreach (var items in Dbmodellist)
+                    {
+                        Employeelist.Add(new EmployeeDesignationViewModel
+                        {
+                            DesignationId = items.DesignationId,
+                            Designation = items.Designation
+                        });
+                    }
+                }
+                return Employeelist;
             }
             catch (Exception ex)
             {
@@ -82,7 +88,6 @@ namespace Services.Implements
             }
 
         }
-
         public EmployeeDetailViewModel GetEmployeeById(int id)
         {
             try
@@ -162,5 +167,6 @@ namespace Services.Implements
                 throw ex;
             }
         }
+        
     }
 }

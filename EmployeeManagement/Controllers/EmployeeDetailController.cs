@@ -1,9 +1,11 @@
 ﻿using CommonModels.DbModels;
 using CommonModels.ViewModel;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Text.Json;
 
 namespace EmployeeManagement.Controllers
 {
@@ -11,10 +13,12 @@ namespace EmployeeManagement.Controllers
     {
         private readonly IHttpClientFactory httpClientFactory;
         private readonly IWebHostEnvironment _hostEnvironment;
-        public EmployeeDetailController(IHttpClientFactory httpClientFactory, IWebHostEnvironment hostEnvironment)
+        public IConfiguration configuration;
+        public EmployeeDetailController(IHttpClientFactory httpClientFactory, IWebHostEnvironment hostEnvironment, IConfiguration iConfig)
         {
             this.httpClientFactory = httpClientFactory;
             _hostEnvironment = hostEnvironment;
+            configuration = iConfig;
         }
         [HttpGet]
         public IActionResult Registration()
@@ -68,17 +72,27 @@ namespace EmployeeManagement.Controllers
         }
         [HttpGet]
         public async Task<IActionResult> Index()
+
         {
             var token = Request.Cookies["access_token"];
+
             List<EmployeeDetailViewModel> response = new List<EmployeeDetailViewModel>();
             try
             {
                 //Get All EmployeeDetail from WebApi
                 var client = httpClientFactory.CreateClient();
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var apiUrl = "https://localhost:7296/api/EmployeeDetail";
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Newtonsoft.Json.Linq.JObject.Parse(token)["jwtToken"].ToString());
+                var apiUrl = "https://localhost:7296/api/EmployeeDetail/GetAll";
                 var httpResponseMessage = await client.GetAsync(apiUrl);
+                if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return RedirectToAction("Login");
+                }
                 httpResponseMessage.EnsureSuccessStatusCode();
+                if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return RedirectToAction("Login");
+                }
                 response.AddRange(await httpResponseMessage.Content.ReadFromJsonAsync<IEnumerable<EmployeeDetailViewModel>>());
             }
             catch (Exception ex)
@@ -90,57 +104,66 @@ namespace EmployeeManagement.Controllers
         [HttpGet]
         public async Task<IActionResult> AddEmployee()
         {
-            return View();
+            var token = Request.Cookies["access_token"];
+            List<EmployeeDesignationViewModel> response = new List<EmployeeDesignationViewModel>();
+            //Get All EmployeeDetail from WebApi
+            var client = httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Newtonsoft.Json.Linq.JObject.Parse(token)["jwtToken"].ToString());
+            var apiUrl = "https://localhost:7296/api/EmployeeDetail/GetDesignation";
+            var httpResponseMessage = await client.GetAsync(apiUrl);
+            var content = await httpResponseMessage.Content.ReadAsStringAsync();
+            if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return RedirectToAction("Login");
+            }
+            httpResponseMessage.EnsureSuccessStatusCode();
+            var designationList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<EmployeeDesignationViewModel>>(content);
+
+            ViewBag.Designations = new SelectList(designationList, "DesignationId", "Designation");
+
+            return View("AddEmployee");
+
+
         }
         [HttpPost]
         public async Task<IActionResult> AddEmployeeDetail(EmployeeDetailViewModel employee)
         {
-            try
-            {
-                string wwwRootPath = _hostEnvironment.WebRootPath;
-                if (employee.ImageFile != null && employee.ImageFile.FileName != null)
-                {
-                    string fileName = Path.GetFileNameWithoutExtension(employee.ImageFile.FileName);
-                    string extension = Path.GetExtension(employee.ImageFile.FileName);
-                    employee.ProfilePicture = fileName + DateTime.Now.ToString("yymmssfff") + extension;
-                    string path = Path.Combine(wwwRootPath, "Images", fileName);
-                    using (var fileStream = new FileStream(path, FileMode.Create))
-                    {
-                        await employee.ImageFile.CopyToAsync(fileStream);
-                    }
-                }
-                var client = new HttpClient();
-                client.BaseAddress = new Uri("https://localhost:7296/api/EmployeeDetail/");
-                var json = JsonSerializer.Serialize(employee);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var response = await client.PostAsync("AddEmployee", content);
+            var token = Request.Cookies["access_token"];
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var responseContent = await response.Content.ReadAsStringAsync();
-                    var postResponse = JsonSerializer.Deserialize<EmployeeDetailViewModel>(responseContent);
-                    TempData["success"] = "EmployeeDetail Created Successfully";
-                    return RedirectToAction("Index"); // Adjust the action name and parameters as needed
-                }
-                else
-                {
-                    TempData["error"] = "Failed to create EmployeeDetail.";
-                    return RedirectToAction("Index"); // Adjust the action name and parameters as needed
-                }
+            string wwwRootPath = _hostEnvironment.WebRootPath;
 
-                return View();
-            }
-            catch (Exception ex)
+            if (employee.ImageFile != null && employee.ImageFile.FileName != null)
             {
-                return BadRequest(ex.Message);
+                string fileName = Path.GetFileNameWithoutExtension(employee.ImageFile.FileName);
+                string extension = Path.GetExtension(employee.ImageFile.FileName);
+                employee.ProfilePicture = fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
+                string path = Path.Combine(wwwRootPath, "Images", fileName);
+                using (var fileStream = new FileStream(path, FileMode.Create))
+                {
+                    await employee.ImageFile.CopyToAsync(fileStream);
+                }
             }
+
+            employee.ImageFile = null;
+            var client = httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Newtonsoft.Json.Linq.JObject.Parse(token)["jwtToken"].ToString());
+            var response = await client.PostAsJsonAsync("https://localhost:7296/api/EmployeeDetail/AddEmployee", employee); // Await the response asynchronously
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["success"] = "EmployeeDetail Created Successfully";
+                return RedirectToAction("Index");
+            }
+            return RedirectToAction("AddEmployee");
         }
+
         [HttpGet]
         public async Task<IActionResult> EditEmployee(int id)
         {
+            var token = Request.Cookies["access_token"].ToString();
             try
             {
                 var client = httpClientFactory.CreateClient();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Newtonsoft.Json.Linq.JObject.Parse(token)["jwtToken"].ToString());
                 var response = await client.GetFromJsonAsync<EmployeeDetailViewModel>($"https://localhost:7296/api/EmployeeDetail/{id.ToString()}");
                 if (response != null)
                 {
@@ -156,18 +179,41 @@ namespace EmployeeManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> EditEmployee(EmployeeDetailViewModel employee)
         {
+            var token = Request.Cookies["access_token"].ToString();
             try
             {
+
+                string wwwRootPath = _hostEnvironment.WebRootPath;
+                if (employee.ImageFile != null && employee.ImageFile.FileName != null)
+                {
+                    string fileName = Path.GetFileNameWithoutExtension(employee.ImageFile.FileName);
+                    string extension = Path.GetExtension(employee.ImageFile.FileName);
+                    employee.ProfilePicture = fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
+                    string path = Path.Combine(wwwRootPath, "Images", fileName);
+                    using (var fileStream = new FileStream(path, FileMode.Create))
+                    {
+                        await employee.ImageFile.CopyToAsync(fileStream);
+                    }
+                }
+
+                employee.ImageFile = null;
                 var client = httpClientFactory.CreateClient();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Newtonsoft.Json.Linq.JObject.Parse(token)["jwtToken"].ToString());
+
                 var httpRequestMessage = new HttpRequestMessage()
                 {
                     Method = HttpMethod.Put,
                     RequestUri = new Uri($"https://localhost:7296/api/EmployeeDetail/{employee.Id}"),
-                    Content = new StringContent(JsonSerializer.Serialize(employee), Encoding.UTF8, "application/json")
+                    Content = new StringContent(JsonConvert.SerializeObject(employee), Encoding.UTF8, "application/json")
                 };
                 var httpResponseMessage = await client.SendAsync(httpRequestMessage);
+                if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return RedirectToAction("Login"); // Redirect to login page
+                }
                 httpResponseMessage.EnsureSuccessStatusCode();
                 var response = await httpResponseMessage.Content.ReadFromJsonAsync<EmployeeDetailViewModel>();
+
                 if (httpResponseMessage != null)
                 {
                     TempData["success"] = "EmployeeDetail Updated Successfully";
@@ -184,11 +230,19 @@ namespace EmployeeManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteEmployee(EmployeeDetailViewModel employee)
         {
+            var token = Request.Cookies["access_token"].ToString();
             try
             {
                 var client = httpClientFactory.CreateClient();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Newtonsoft.Json.Linq.JObject.Parse(token)["jwtToken"].ToString());
+
                 var httpResponseMessage = await client.DeleteAsync($"https://localhost:7296/api/EmployeeDetail/{employee.Id}");
+                if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return RedirectToAction("Login");
+                }
                 httpResponseMessage.EnsureSuccessStatusCode();
+
                 TempData["success"] = "EmployeeDetail Deleted Successfully";
                 return RedirectToAction("Index");
             }

@@ -11,32 +11,23 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="AddEmployeeDetail" enctype="multipart/form-data">
+        <form asp-action="AddEmployeeDetail" FormMethod.Post, enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @*<div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>*@
+           
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="DesignationId" class="control-label"></label>
-                <input asp-for="DesignationId" class="form-control" />
-                <span asp-validation-for="DesignationId" class="text-danger"></span>
+                @Html.LabelFor(model => model.DesignationId)
+                @Html.DropDownListFor(model => model.DesignationId, ViewBag.Designations as SelectList, "Select designation", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.DesignationId)
             </div>
-           @* <div class="form-group">
-                <label asp-for="ProfilePicture" class="control-label"></label>
-                <input type="file" name="ProfilePicture" id="fileupload" class="form-control" />
-            </div>*@
-
+          
             <div class="form-group">
-                <label asp-for="ImageFile" class="control-label"></label>
-                <input asp-for="ImageFile" accept="images/*" />
-                <span asp-validation-for="ImageFile" class="text-danger"></span>
+                <label asp-for="ProfilePicture" class="control-label"></label>
+                <input type="file" name="ImageFile" required class="form-control" />
             </div>
 
             <div class="form-group">
@@ -72,7 +63,7 @@
     </div>
 </div>
 
-@section Scripts {
+   @section Scripts {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
@@ -80,28 +71,6 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
-        //$(document).ready(function () {
-        //    $('#btnsave').click(function () {
-        //        var form = $('#employeeForm')[0];
-        //        var formData = new FormData(form);
-
-        //        $.ajax({
-        //            url: 'EmployeeDetail/AddEmployeeDetail',
-        //            type: 'POST',
-        //            data: formData,
-        //            processData: false,
-        //            contentType: false,
-        //            success: function (response) {
-        //                // Handle success response
-        //                console.log(response);
-        //            },
-        //            error: function (xhr, status, error) {
-        //                // Handle error response
-        //                console.error('Image upload failed: ' + error);
-        //            }
-        //        });
-        //    });
-        //});
         // Enable or disable the button based on the form validity
         $(function () {
             // Disable the button initially
@@ -112,7 +81,8 @@
                     if ($(this).val() === "") {
                         isFormValid = false;
                         return false;
-                    });
+                    }
+                }); // Corrected placement of closing parenthesis
                 $("input[type='submit']").prop('disabled', !isFormValid);
             });
         });

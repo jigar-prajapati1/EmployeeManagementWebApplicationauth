@@ -25,6 +25,7 @@ namespace EmployeeMangementWebApi.Controllers
         ///   <br />
         /// </returns>
         [HttpGet]
+        [Route("GetAll")]
         public IActionResult GetAll()
         {
             try
@@ -62,12 +63,18 @@ namespace EmployeeMangementWebApi.Controllers
         /// <returns>
         ///   <br />
         /// </returns>
-        [Route("AddEmployee")]
         [HttpPost]
+        [Route("AddEmployee")]
         public IActionResult AddEmployee(EmployeeDetailViewModel empDetail)
         {
             try
             {
+                //if (imageFile != null && imageFile.Length > 0)
+                //{
+                //    // Save the image file to the desired location
+                //    string fileName = Path.GetFileName(imageFile.FileName);
+                //    // ...
+                //}
                 employeeDetailService.AddEmployeeDetail(empDetail);
                 return Ok(empDetail);
             }
@@ -110,6 +117,22 @@ namespace EmployeeMangementWebApi.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+        /// </returns>
+        [HttpGet]
+        [Route("GetDesignation")]
+        public IActionResult GetDesignation()
+        {
+            try
+            {
+                List<EmployeeDesignationViewModel> employees = employeeDetailService.GetDesignations();
+                return Ok(employees);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
     }
 }
