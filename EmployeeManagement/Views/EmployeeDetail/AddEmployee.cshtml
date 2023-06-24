@@ -1,69 +1,85 @@
-﻿
-@model CommonModels.ViewModel.EmployeeDetailViewModel
+﻿@model CommonModels.ViewModel.EmployeeDetailViewModel
 
 @{
     ViewData["Title"] = "AddEmployeeDetail";
 }
 
 <h1>AddEmployee</h1>
-
-<h4>EmployeeDetailView</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="AddEmployeeDetail" FormMethod.Post, enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-           
+
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
+                &nbsp;
             </div>
             <div class="form-group">
                 @Html.LabelFor(model => model.DesignationId)
                 @Html.DropDownListFor(model => model.DesignationId, ViewBag.Designations as SelectList, "Select designation", new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.DesignationId)
+                &nbsp;
             </div>
-          
+
             <div class="form-group">
-                <label asp-for="ProfilePicture" class="control-label"></label>
-                <input type="file" name="ImageFile" required class="form-control" />
+                <label asp-for="ProfilePicture" class="control-label"> </label>
+                <input type="file" name="ImageFile" id="fileName" onchange="validateFileType()" onclick="validateFileType();" required class="form-control" accept="image/gif,image/jpg,image/jpeg,image/png" />
+                <script type="text/javascript">
+                    function validateFileType() {
+                        var fileName = document.getElementById("fileName").value;
+                        var idxDot = fileName.lastIndexOf(".") + 1;
+                        var extFile = fileName.substr(idxDot, fileName.length).toLowerCase();
+                        if (extFile == "jpg" || extFile == "jpeg" || extFile == "png") {
+                            //TO DO
+                        } else {
+                            alert("Only jpg/jpeg and png files are allowed!");
+                        }
+                    }
+                </script>
+                &nbsp;
             </div>
 
             <div class="form-group">
                 <label asp-for="Salary" class="control-label"></label>
                 <input asp-for="Salary" class="form-control" />
                 <span asp-validation-for="Salary" class="text-danger"></span>
+                &nbsp;
             </div>
             <div class="form-group">
                 <label asp-for="DataOfBirth" class="control-label"></label>
                 <input asp-for="DataOfBirth" class="form-control" />
                 <span asp-validation-for="DataOfBirth" class="text-danger"></span>
+                &nbsp;
             </div>
 
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
+                &nbsp;
+
             </div>
             <div class="form-group">
                 <label asp-for="Address" class="control-label"></label>
                 <input asp-for="Address" class="form-control" />
                 <span asp-validation-for="Address" class="text-danger"></span>
+                &nbsp;
             </div>
-            <br />
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
 
                 <a asp-action="Index">Back to List</a>
 
             </div>
-      </form>
-
+        </form>
     </div>
 </div>
 
-   @section Scripts {
+@section Scripts {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
@@ -71,10 +87,11 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
-        // Enable or disable the button based on the form validity
-        $(function () {
+        $(function () 
+        {
             // Disable the button initially
             $("input[type='submit']").prop('disabled', true);
+
             $("form input").on("input", function () {
                 var isFormValid = true;
                 $("form input").each(function () {
@@ -82,9 +99,21 @@
                         isFormValid = false;
                         return false;
                     }
-                }); // Corrected placement of closing parenthesis
-                $("input[type='submit']").prop('disabled', !isFormValid);
+                });
+
+                // Check if the selected file is a PNG or JPG image
+                $("#fileName").on("change", function () {
+                    var fileInput = $(this);
+                    var fileName = fileInput.val();
+                    var fileExtension = fileName.split('.').pop().toLowerCase();
+
+                    if (fileExtension !== "png" && fileExtension !== "jpg" && fileExtension !== "jpeg") {
+                        alert("Please select a PNG, JPG, or JPEG image file.");
+                        fileInput.val(""); // Clear the file input value
+                        $("input[type='submit']").prop('disabled', true); // Disable the submit button
+                    }
+                });
             });
-        });
+            
     </script>
 }

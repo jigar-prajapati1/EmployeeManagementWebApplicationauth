@@ -16,22 +16,36 @@ namespace Services.Implements
 
         public void NewEmployeeRegistration(UserRegistrationViewModel _registration)
         {
-            var registration = new UserRegistration
+            try
             {
-                Email = _registration.Email,
-                Password = _registration.Password,
-                ConfirmPassword = _registration.ConfirmPassword
-            };
-            _empDetailRepo.EmployeeRegistration(registration);
+                var registration = new UserRegistration
+                {
+                    Email = _registration.Email,
+                    Password = _registration.Password,
+                    ConfirmPassword = _registration.ConfirmPassword
+                };
+                _empDetailRepo.EmployeeRegistration(registration);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Something Went Wrong" + ex.Message);
+            }
         }
         public void NewEmployeeLogin(UsersLoginViewModel _usersLogin)
         {
-            var usersLogin = new UsersLogin
+            try
             {
-                Email = _usersLogin.Email,
-                password = _usersLogin.password
-            };
-            _empDetailRepo.EmployeeLogin(usersLogin);
+                var usersLogin = new UsersLogin
+                {
+                    Email = _usersLogin.Email,
+                    password = _usersLogin.password
+                };
+                _empDetailRepo.EmployeeLogin(usersLogin);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Something Went Wrong" + ex.Message);
+            }
         }
         public List<EmployeeDetailViewModel> GetAllEmployee()
         {
@@ -53,6 +67,7 @@ namespace Services.Implements
                             DataOfBirth = items.DataOfBirth,
                             Email = items.Email,
                             Address = items.Address,
+                            Designation = items.Designation,
                         });
                     }
                 }
@@ -60,7 +75,7 @@ namespace Services.Implements
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("Something Went Wrong" + ex.Message);
             }
         }
         public List<EmployeeDesignationViewModel> GetDesignations()
@@ -84,7 +99,7 @@ namespace Services.Implements
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("Something Went Wrong" + ex.Message);
             }
 
         }
@@ -108,7 +123,7 @@ namespace Services.Implements
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("Something Went Wrong" + ex.Message);
             }
 
         }
@@ -133,7 +148,7 @@ namespace Services.Implements
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("Something Went Wrong" + ex.Message);
             }
         }
         public void UpdateEmployeeDetail(EmployeeDetailViewModel employeeDetail, int id)
@@ -153,7 +168,7 @@ namespace Services.Implements
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("Something Went Wrong" + ex.Message);
             }
         }
         public void DeleteEmployee(int id)
@@ -164,7 +179,7 @@ namespace Services.Implements
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("Something Went Wrong" + ex.Message);
             }
         }
         

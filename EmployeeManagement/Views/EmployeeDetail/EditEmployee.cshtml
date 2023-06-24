@@ -6,7 +6,6 @@
 
 <h1>EditEmployee</h1>
 
-<h4>EmployeeDetailView</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -22,18 +21,21 @@
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="DesignationId" class="control-label"></label>
-                <input asp-for="DesignationId" class="form-control" />
-                <span asp-validation-for="DesignationId" class="text-danger"></span>
+                @Html.LabelFor(model => model.DesignationId)
+                @Html.DropDownListFor(model => model.DesignationId, ViewBag.Designations as SelectList, "Select designations", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.DesignationId)
             </div>
+
+
             <div class="form-group">
-                <label asp-for="ProfilePicture" class="control-label"></label>
-                <input type="file" name="ImageFile" required class="form-control" />
-                <input asp-for="ProfilePicture" class="form-control" />
-                <span asp-validation-for="ProfilePicture" class="text-danger"></span>
+                <label asp-for="ProfilePicture" class="control-label"> </label>
+                <img src="~/Images/@Model.ProfilePicture" height="50" width="50" />
+                <input type="file" name="ImageFile" id="fileName" onchange="validateFileType()" required class="form-control" accept="image/gif,image/jpg,image/jpeg,image/png" />
+                &nbsp;
             </div>
-           
+
             <div class="form-group">
                 <label asp-for="Salary" class="control-label"></label>
                 <input asp-for="Salary" class="form-control" />
@@ -67,7 +69,41 @@
 </div>
 
 @section Scripts {
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        $(function () {
+            // Disable the button initially
+            $("input[type='submit']").prop('disabled', true);
+
+            $("form input").on("input", function () {
+                var isFormValid = true;
+                $("form input").each(function () {
+                    if ($(this).val() === "") {
+                        isFormValid = false;
+                        return false;
+                    }
+                });
+
+                // Check if the selected file is a PNG or JPG image
+                $("#fileName").on("change", function () {
+                    var fileInput = $(this);
+                    var fileName = fileInput.val();
+                    var fileExtension = fileName.split('.').pop().toLowerCase();
+
+                    if (fileExtension !== "png" && fileExtension !== "jpg" && fileExtension !== "jpeg") {
+                        alert("Please select a PNG, JPG, or JPEG image file.");
+                        fileInput.val(" "); // Clear the file input value
+                        $("input[type='submit']").prop('disabled', true); // Disable the submit button
+                    } else {
+                        $("input[type='submit']").prop('disabled', !isFormValid); // Enable/disable submit button based on form validity
+                    }
+                });
+            });
+        });
+    </script>
 }

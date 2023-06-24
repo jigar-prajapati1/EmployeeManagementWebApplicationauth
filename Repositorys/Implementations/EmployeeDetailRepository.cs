@@ -18,24 +18,54 @@ namespace Repositorys.Implements
             _configuration = configuration;
             conn = _configuration.GetConnectionString("DefaultConnection");
         }
+        /// <summary>Employees the registration.</summary>
+        /// <param name="_registration">The registration.</param>
+        /// <returns>
+        ///   <br />
+        /// </returns>
+        /// <exception cref="System.Exception">Something Went Wrong" + ex.Message</exception>
         public List<UserRegistration> EmployeeRegistration(UserRegistration _registration)
         {
-            var parameter = new DynamicParameters();
-            using IDbConnection connection = new SqlConnection(conn);
-            parameter.Add("@Email", _registration.Email);
-            parameter.Add("@Password", _registration.Password);
-            return connection.Query<UserRegistration>("UserRegistration", parameter, commandType: CommandType.StoredProcedure).ToList();
+            try
+            {
+                var parameter = new DynamicParameters();
+                using IDbConnection connection = new SqlConnection(conn);
+                parameter.Add("@Email", _registration.Email);
+                parameter.Add("@Password", _registration.Password);
+                return connection.Query<UserRegistration>("UserRegistration", parameter, commandType: CommandType.StoredProcedure).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Something Went Wrong" + ex.Message);
+            }
         }
+        /// <summary>Employees the login.</summary>
+        /// <param name="_login">The login.</param>
+        /// <returns>
+        ///   <br />
+        /// </returns>
+        /// <exception cref="System.Exception">Something Went Wrong" + ex.Message</exception>
         public List<UsersLogin> EmployeeLogin(UsersLogin _login)
         {
-            var parameter = new DynamicParameters();
-            using IDbConnection connection = new SqlConnection(conn);
-            parameter.Add("@Email", _login.Email);
-            parameter.Add("@Password", _login.password);
+            try
+            {
+                var parameter = new DynamicParameters();
+                using IDbConnection connection = new SqlConnection(conn);
+                parameter.Add("@Email", _login.Email);
+                parameter.Add("@Password", _login.password);
 
-            return connection.Query<UsersLogin>("UsersLogin", parameter, commandType: CommandType.StoredProcedure).ToList();
-
+                return connection.Query<UsersLogin>("UsersLogin", parameter, commandType: CommandType.StoredProcedure).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Something Went Wrong" + ex.Message);
+            }
         }
+        /// <summary>Gets the designations.</summary>
+        /// <returns>
+        ///   <br />
+        /// </returns>
+        /// <exception cref="System.Exception">Something Went Wrong" + ex.Message</exception>
         public List<EmployeeDesignation> GetDesignations()
         {
             try
@@ -45,9 +75,14 @@ namespace Repositorys.Implements
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("Something Went Wrong" + ex.Message);
             }
         }
+        /// <summary>Gets all employee.</summary>
+        /// <returns>
+        ///   <br />
+        /// </returns>
+        /// <exception cref="System.Exception">Something Went Wrong" + ex.Message</exception>
         public List<EmployeeDetail> GetAllEmployee()
         {
             try
@@ -57,10 +92,16 @@ namespace Repositorys.Implements
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("Something Went Wrong" + ex.Message);
             }
 
         }
+        /// <summary>Gets the employee by identifier.</summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>
+        ///   <br />
+        /// </returns>
+        /// <exception cref="System.Exception">Something Went Wrong"+ex.Message</exception>
         public EmployeeDetail GetEmployeeById(int id)
         {
             try
@@ -72,10 +113,16 @@ namespace Repositorys.Implements
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("Something Went Wrong"+ex.Message);
             }
 
         }
+        /// <summary>Adds the employee.</summary>
+        /// <param name="employee">The employee.</param>
+        /// <returns>
+        ///   <br />
+        /// </returns>
+        /// <exception cref="System.Exception">Something Went Wrong" +ex.Message</exception>
         public List<EmployeeDetail> AddEmployee(EmployeeDetail employee)
         {
             try
@@ -96,10 +143,17 @@ namespace Repositorys.Implements
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("Something Went Wrong" +ex.Message);
             }
 
         }
+        /// <summary>Updates the employee.</summary>
+        /// <param name="employee">The employee.</param>
+        /// <param name="id">The identifier.</param>
+        /// <returns>
+        ///   <br />
+        /// </returns>
+        /// <exception cref="System.Exception">Something Went Wrong" + ex.Message</exception>
         public List<EmployeeDetail> UpdateEmployee(EmployeeDetail employee, int id)
         {
             try
@@ -120,9 +174,15 @@ namespace Repositorys.Implements
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("Something Went Wrong" + ex.Message);
             }
         }
+        /// <summary>Deletes the employee.</summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>
+        ///   <br />
+        /// </returns>
+        /// <exception cref="System.Exception">Something Went Wrong" + ex.Message</exception>
         public EmployeeDetail DeleteEmployee(int id)
         {
             try
@@ -134,7 +194,7 @@ namespace Repositorys.Implements
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("Something Went Wrong" + ex.Message);
             }
 
         }

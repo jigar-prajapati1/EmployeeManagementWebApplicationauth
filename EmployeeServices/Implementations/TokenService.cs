@@ -16,17 +16,24 @@ namespace EmployeeServices.Implementations
         }
         public string CreatejWTToken(ClaimsIdentity claimsIdentity)
         {
-            // Create claims
-            var Authclaim = new List<Claim>(claimsIdentity.Claims);
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var token = new JwtSecurityToken(
-            configuration["Jwt:Issuer"],
-            configuration["Jwt:Audience"],
-            claims: Authclaim,
-            expires: DateTime.Now.AddHours(15),
-            signingCredentials: credentials);
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            try
+            {
+                // Create claims
+                var Authclaim = new List<Claim>(claimsIdentity.Claims);
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
+                var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                var token = new JwtSecurityToken(
+                configuration["Jwt:Issuer"],
+                configuration["Jwt:Audience"],
+                claims: Authclaim,
+                expires: DateTime.Now.AddHours(15),
+                signingCredentials: credentials);
+                return new JwtSecurityTokenHandler().WriteToken(token);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Something Went Wrong" + ex.Message);
+            }
         }
     }
 }

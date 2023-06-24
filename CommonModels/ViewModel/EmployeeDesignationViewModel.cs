@@ -7,6 +7,14 @@ namespace CommonModels.ViewModel
         [Key]
         public int DesignationId { get; set; }
         [Required(ErrorMessage = "Designation is required.")]
-        public string Designation { get; set; }
+        public string Designation { 
+            
+            
+            
+            
+            
+            
+            
+            get; set; }
     }
 }

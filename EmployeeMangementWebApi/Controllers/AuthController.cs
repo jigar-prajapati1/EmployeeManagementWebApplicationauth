@@ -9,7 +9,7 @@ namespace EmployeeMangementWebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    
+
     public class AuthController : Controller
     {
         private readonly IEmployeeDetailService employeeDetailService;
@@ -23,29 +23,43 @@ namespace EmployeeMangementWebApi.Controllers
         [Route("EmployeeRegistration")]
         public async Task<IActionResult> Register(UserRegistrationViewModel _registration)
         {
-            employeeDetailService.NewEmployeeRegistration(_registration);
-            return Ok("New Registration successfull");
+            try
+            {
+                employeeDetailService.NewEmployeeRegistration(_registration);
+                return Ok("New Registration successfull");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpPost]
         [Route("Login")]
         public async Task<IActionResult> Login(UsersLoginViewModel usersLogin)
         {
-            employeeDetailService.NewEmployeeLogin(usersLogin);
-            // Create ClaimsIdentity
-            var claims = new List<Claim>
+            try
+            {
+                employeeDetailService.NewEmployeeLogin(usersLogin);
+                // Create ClaimsIdentity
+                var claims = new List<Claim>
             {
                  new Claim(Microsoft.IdentityModel.Claims.ClaimTypes.Email, usersLogin.Email)
             };
-            var claimsIdentity = new ClaimsIdentity(claims, "EmployeeAuthentication");
+                var claimsIdentity = new ClaimsIdentity(claims, "EmployeeAuthentication");
 
-            // Create Token
-            var jwtToken = tokenservice.CreatejWTToken(claimsIdentity);
+                // Create Token
+                var jwtToken = tokenservice.CreatejWTToken(claimsIdentity);
 
-            var response = new LoginResponseDto
+                var response = new LoginResponseDto
+                {
+                    JwtToken = jwtToken
+                };
+                return Ok(response);
+            }
+            catch (Exception ex)
             {
-                JwtToken = jwtToken
-            };
-            return Ok(response);
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

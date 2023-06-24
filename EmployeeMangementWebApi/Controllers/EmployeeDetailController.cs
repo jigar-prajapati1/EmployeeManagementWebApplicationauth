@@ -8,10 +8,10 @@ using Services.Interfaces;
 
 namespace EmployeeMangementWebApi.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-   
+
     public class EmployeeDetailController : Controller
     {
         private readonly IEmployeeDetailService employeeDetailService;
