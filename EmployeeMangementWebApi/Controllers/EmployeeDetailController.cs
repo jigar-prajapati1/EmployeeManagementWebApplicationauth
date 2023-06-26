@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Services.Interfaces;
+using static EmployeeManagement.Controllers.EmployeeDetailController;
 
 namespace EmployeeMangementWebApi.Controllers
 {

@@ -25,6 +25,11 @@ namespace EmployeeManagement.Controllers
         {
             return View();
         }
+        /// <summary>Registrations the specified registration.</summary>
+        /// <param name="_registration">The registration.</param>
+        /// <returns>
+        ///   <br />
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> Registration(UserRegistrationViewModel _registration)
         {
@@ -50,6 +55,11 @@ namespace EmployeeManagement.Controllers
         {
             return View();
         }
+        /// <summary>Logins the specified login.</summary>
+        /// <param name="_login">The login.</param>
+        /// <returns>
+        ///   <br />
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> Login(UsersLoginViewModel _login)
         {
@@ -84,6 +94,11 @@ namespace EmployeeManagement.Controllers
                 return BadRequest("Login Unsuccessful: " + ex.Message);
             }
         }
+
+        /// <summary>Indexes this instance.</summary>
+        /// <returns>
+        ///   <br />
+        /// </returns>
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -95,7 +110,7 @@ namespace EmployeeManagement.Controllers
             }
             try
             {
-            List<EmployeeDetailViewModel> response = new List<EmployeeDetailViewModel>();
+                List<EmployeeDetailViewModel> response = new List<EmployeeDetailViewModel>();
 
                 //Get All EmployeeDetail from WebApi
                 var client = httpClientFactory.CreateClient();
@@ -119,6 +134,10 @@ namespace EmployeeManagement.Controllers
             }
             return View("Error");
         }
+        /// <summary>Adds the employee.</summary>
+        /// <returns>
+        ///   <br />
+        /// </returns>
         [HttpGet]
         public async Task<IActionResult> AddEmployee()
         {
@@ -148,6 +167,11 @@ namespace EmployeeManagement.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        /// <summary>Adds the employee detail.</summary>
+        /// <param name="employee">The employee.</param>
+        /// <returns>
+        ///   <br />
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> AddEmployeeDetail(EmployeeDetailViewModel employee)
         {
@@ -186,13 +210,16 @@ namespace EmployeeManagement.Controllers
             }
         }
 
+        /// <summary>Edits the employee.</summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>
+        ///   <br />
+        /// </returns>
         [HttpGet]
-
         public async Task<IActionResult> EditEmployee(int id)
         {
             try
             {
-                
                 var designation = GetDesignation();
                 ViewBag.Designations = new SelectList(designation, "DesignationId", "Designation");
                 var token = Request.Cookies["access_token"].ToString();
@@ -210,10 +237,15 @@ namespace EmployeeManagement.Controllers
             {
                 return BadRequest(ex.Message);
             }
-        
 
-    }
-    [HttpPost]
+
+        }
+        /// <summary>Edits the employee.</summary>
+        /// <param name="employee">The employee.</param>
+        /// <returns>
+        ///   <br />
+        /// </returns>
+        [HttpPost]
         public async Task<IActionResult> EditEmployee(EmployeeDetailViewModel employee)
         {
             try
@@ -263,11 +295,16 @@ namespace EmployeeManagement.Controllers
             }
         }
 
+        /// <summary>Deletes the employee.</summary>
+        /// <param name="employee">The employee.</param>
+        /// <returns>
+        ///   <br />
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> DeleteEmployee(EmployeeDetailViewModel employee)
         {
-          try 
-          { 
+            try
+            {
                 var token = Request.Cookies["access_token"].ToString();
                 var client = httpClientFactory.CreateClient();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Newtonsoft.Json.Linq.JObject.Parse(token)["jwtToken"].ToString());
@@ -286,6 +323,10 @@ namespace EmployeeManagement.Controllers
                 return BadRequest($"Could not delete {ex.Message}");
             }
         }
+        /// <summary>Gets the designation.</summary>
+        /// <returns>
+        ///   <br />
+        /// </returns>
         [NonAction]
         public List<EmployeeDetailViewModel> GetDesignation()
         {

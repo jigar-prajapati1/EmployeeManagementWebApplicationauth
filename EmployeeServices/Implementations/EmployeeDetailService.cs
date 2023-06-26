@@ -14,6 +14,9 @@ namespace Services.Implements
             _empDetailRepo = empDetailRepo;
         }
 
+        /// <summary>Creates new employeeregistration.</summary>
+        /// <param name="_registration">The registration.</param>
+        /// <exception cref="System.Exception">Something Went Wrong" + ex.Message</exception>
         public void NewEmployeeRegistration(UserRegistrationViewModel _registration)
         {
             try
@@ -31,6 +34,9 @@ namespace Services.Implements
                 throw new Exception("Something Went Wrong" + ex.Message);
             }
         }
+        /// <summary>Creates new employeelogin.</summary>
+        /// <param name="_usersLogin">The users login.</param>
+        /// <exception cref="System.Exception">Something Went Wrong" + ex.Message</exception>
         public void NewEmployeeLogin(UsersLoginViewModel _usersLogin)
         {
             try
@@ -47,6 +53,11 @@ namespace Services.Implements
                 throw new Exception("Something Went Wrong" + ex.Message);
             }
         }
+        /// <summary>Gets all employee.</summary>
+        /// <returns>
+        ///   <br />
+        /// </returns>
+        /// <exception cref="System.Exception">Something Went Wrong" + ex.Message</exception>
         public List<EmployeeDetailViewModel> GetAllEmployee()
         {
             try
@@ -78,6 +89,11 @@ namespace Services.Implements
                 throw new Exception("Something Went Wrong" + ex.Message);
             }
         }
+        /// <summary>Gets the designations.</summary>
+        /// <returns>
+        ///   <br />
+        /// </returns>
+        /// <exception cref="System.Exception">Something Went Wrong" + ex.Message</exception>
         public List<EmployeeDesignationViewModel> GetDesignations()
         {
             try

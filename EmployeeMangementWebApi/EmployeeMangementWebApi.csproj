@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EmployeeManagement\EmployeeManagement.csproj" />
     <ProjectReference Include="..\EmployeeServices\EmployeeServices.csproj" />
   </ItemGroup>
 
