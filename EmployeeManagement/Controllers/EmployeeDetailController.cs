@@ -1,26 +1,34 @@
 ﻿using CommonModels.DbModels;
 using CommonModels.ViewModel;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System.Net;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using System.Net.Http.Headers;
 using System.Text;
-
+using Microsoft.AspNetCore.Mvc.Filters;
+using Azure.Core;
+using System.Net.Http;
 
 namespace EmployeeManagement.Controllers
 {
+
     public class EmployeeDetailController : Controller
     {
         private readonly IHttpClientFactory httpClientFactory;
         private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly TokenInterceptor _tokenInterceptor;
         public IConfiguration configuration;
-        public EmployeeDetailController(IHttpClientFactory httpClientFactory, IWebHostEnvironment hostEnvironment, IConfiguration iConfig)
+        public EmployeeDetailController(IHttpClientFactory httpClientFactory, IWebHostEnvironment hostEnvironment, IConfiguration iConfig, TokenInterceptor tokenInterceptor)
         {
             this.httpClientFactory = httpClientFactory;
+            _apiClient = httpClientFactory.CreateClient("API");
             _hostEnvironment = hostEnvironment;
             configuration = iConfig;
+            _tokenInterceptor = tokenInterceptor;
         }
         [HttpGet]
         public IActionResult Registration()
@@ -78,13 +86,7 @@ namespace EmployeeManagement.Controllers
                         if (!string.IsNullOrEmpty(token))
                         {
                             // Store Token in a secure cookie:
-                            var cookieOptions = new CookieOptions
-                            {
-                                HttpOnly = true,
-                                Secure = true,
-                                SameSite = SameSiteMode.Strict
-                            };
-                            Response.Cookies.Append("access_token", token, cookieOptions);
+                            HttpContext.Session.SetString("JWToken", token);
                             return RedirectToAction("Index");
                         }
                     }
@@ -95,47 +97,53 @@ namespace EmployeeManagement.Controllers
             {
                 return BadRequest("Login Unsuccessful: " + ex.Message);
             }
+            
         }
 
         /// <summary>Indexes this instance.</summary>
         /// <returns>
         ///   <br />
         /// </returns>
+        /// 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var token = Request.Cookies["access_token"];
-            if (string.IsNullOrEmpty(token))
-            {
-                // Handle the case when the access_token cookie is null or empty
-                return RedirectToAction("Login");
-            }
             try
             {
+                var token = HttpContext.Session.GetString("JWToken");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    // Handle the case when the token is null or empty
+                    return RedirectToAction("Login");
+                }
+
                 List<EmployeeDetailViewModel> response = new List<EmployeeDetailViewModel>();
 
-                //Get All EmployeeDetail from WebApi
+                // Get All EmployeeDetail from WebApi
+             
                 var client = httpClientFactory.CreateClient();
+                client.DefaultRequestHeaders.Authorization = _tokenInterceptor.GetAuthorizationHeader();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Newtonsoft.Json.Linq.JObject.Parse(token)["jwtToken"].ToString());
                 var apiUrl = "https://localhost:7296/api/EmployeeDetail/GetAll";
                 var httpResponseMessage = await client.GetAsync(apiUrl);
+
                 if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     return RedirectToAction("Login");
                 }
+
                 httpResponseMessage.EnsureSuccessStatusCode();
                 response.AddRange(await httpResponseMessage.Content.ReadFromJsonAsync<IEnumerable<EmployeeDetailViewModel>>());
-                if (httpResponseMessage.IsSuccessStatusCode)
-                {
-                    return View(response);
-                }
+
+                return View(response);
             }
             catch (Exception ex)
             {
                 return BadRequest("Error retrieving employee details: " + ex.Message);
             }
-            return View("Error");
         }
+
         /// <summary>Adds the employee.</summary>
         /// <returns>
         ///   <br />
@@ -145,7 +153,7 @@ namespace EmployeeManagement.Controllers
         {
             try
             {
-                var token = Request.Cookies["access_token"];
+                var token = HttpContext.Session.GetString("JWToken");
                 List<EmployeeDesignationViewModel> response = new List<EmployeeDesignationViewModel>();
                 //Get All EmployeeDetail from WebApi
                 var client = httpClientFactory.CreateClient();
@@ -179,7 +187,7 @@ namespace EmployeeManagement.Controllers
         {
             try
             {
-                var token = Request.Cookies["access_token"];
+                var token = HttpContext.Session.GetString("JWToken");
 
                 string wwwRootPath = _hostEnvironment.WebRootPath;
 
@@ -224,7 +232,7 @@ namespace EmployeeManagement.Controllers
             {
                 var designation = GetDesignation();
                 ViewBag.Designations = new SelectList(designation, "DesignationId", "Designation");
-                var token = Request.Cookies["access_token"].ToString();
+                var token = HttpContext.Session.GetString("JWToken");
                 var client = new HttpClient();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Newtonsoft.Json.Linq.JObject.Parse(token)["jwtToken"].ToString());
                 var response = await client.GetFromJsonAsync<EmployeeDetailViewModel>($"https://localhost:7296/api/EmployeeDetail/{id.ToString()}");
@@ -252,7 +260,7 @@ namespace EmployeeManagement.Controllers
         {
             try
             {
-                var token = Request.Cookies["access_token"].ToString();
+                var token = HttpContext.Session.GetString("JWToken");
                 string wwwRootPath = _hostEnvironment.WebRootPath;
                 if (employee.ImageFile != null && employee.ImageFile.FileName != null)
                 {
@@ -307,7 +315,7 @@ namespace EmployeeManagement.Controllers
         {
             try
             {
-                var token = Request.Cookies["access_token"].ToString();
+                var token = HttpContext.Session.GetString("JWToken");
                 var client = httpClientFactory.CreateClient();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Newtonsoft.Json.Linq.JObject.Parse(token)["jwtToken"].ToString());
                 var httpResponseMessage = await client.DeleteAsync($"https://localhost:7296/api/EmployeeDetail/{employee.Id}");
@@ -332,7 +340,7 @@ namespace EmployeeManagement.Controllers
         [NonAction]
         public List<EmployeeDetailViewModel> GetDesignation()
         {
-            var token = Request.Cookies["access_token"].ToString();
+            var token = HttpContext.Session.GetString("JWToken");
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Newtonsoft.Json.Linq.JObject.Parse(token)["jwtToken"].ToString());
@@ -346,4 +354,5 @@ namespace EmployeeManagement.Controllers
         }
     }
 }
+
 
