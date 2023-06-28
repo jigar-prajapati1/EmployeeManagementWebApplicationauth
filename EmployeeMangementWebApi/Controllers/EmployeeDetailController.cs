@@ -9,7 +9,7 @@ using static EmployeeManagement.Controllers.EmployeeDetailController;
 
 namespace EmployeeMangementWebApi.Controllers
 {
-    [TokenAuthorizationFilter]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
 
