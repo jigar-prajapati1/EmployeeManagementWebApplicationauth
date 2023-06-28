@@ -19,6 +19,11 @@ namespace EmployeeMangementWebApi.Controllers
             this.employeeDetailService = employeeDetailService;
             this.tokenservice = tokenservice;
         }
+        /// <summary>Registers the specified registration.</summary>
+        /// <param name="_registration">The registration.</param>
+        /// <returns>
+        ///   <br />
+        /// </returns>
         [HttpPost]
         [Route("EmployeeRegistration")]
         public async Task<IActionResult> Register(UserRegistrationViewModel _registration)
@@ -33,6 +38,11 @@ namespace EmployeeMangementWebApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        /// <summary>Logins the specified users login.</summary>
+        /// <param name="usersLogin">The users login.</param>
+        /// <returns>
+        ///   <br />
+        /// </returns>
         [HttpPost]
         [Route("Login")]
         public async Task<IActionResult> Login(UsersLoginViewModel usersLogin)

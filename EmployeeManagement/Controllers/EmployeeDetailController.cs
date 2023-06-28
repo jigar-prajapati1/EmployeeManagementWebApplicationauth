@@ -1,11 +1,13 @@
 ﻿using CommonModels.DbModels;
 using CommonModels.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+
 
 namespace EmployeeManagement.Controllers
 {
@@ -344,3 +346,4 @@ namespace EmployeeManagement.Controllers
         }
     }
 }
+
