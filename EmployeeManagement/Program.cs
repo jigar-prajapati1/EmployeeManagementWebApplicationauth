@@ -15,7 +15,7 @@ builder.Services.AddTransient<TokenInterceptor>();
 
 builder.Services.AddHttpClient("API", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7296/api/EmployeeDetail");
+    client.BaseAddress = new Uri("https://localhost:7296/api/EmployeeDetail/");
 })
 .AddHttpMessageHandler<TokenInterceptor>();
 

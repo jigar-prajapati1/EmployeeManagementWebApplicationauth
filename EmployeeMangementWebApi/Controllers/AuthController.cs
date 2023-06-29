@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using CommonModels.ViewModel;
 using EmployeeServices.Interface;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
 

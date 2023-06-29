@@ -1,11 +1,8 @@
 ﻿
 using CommonModels.ViewModel;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Services.Interfaces;
-using static EmployeeManagement.Controllers.EmployeeDetailController;
 
 namespace EmployeeMangementWebApi.Controllers
 {
@@ -25,6 +22,7 @@ namespace EmployeeMangementWebApi.Controllers
         /// <returns>
         ///   <br />
         /// </returns>
+        
         [HttpGet]
         [Route("GetAll")]
         public IActionResult GetAll()
@@ -90,7 +88,7 @@ namespace EmployeeMangementWebApi.Controllers
         /// <returns>
         ///   <br />
         /// </returns>
-        [HttpPut]
+        [HttpPost]
         [Route("{id:int}")]
         public IActionResult UpdateEmployee(EmployeeDetailViewModel empDetail, int id)
         {
