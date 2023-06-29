@@ -68,12 +68,6 @@ namespace EmployeeMangementWebApi.Controllers
         {
             try
             {
-                //if (imageFile != null && imageFile.Length > 0)
-                //{
-                //    // Save the image file to the desired location
-                //    string fileName = Path.GetFileName(imageFile.FileName);
-                //    // ...
-                //}
                 employeeDetailService.AddEmployeeDetail(empDetail);
                 return Ok(empDetail);
             }
